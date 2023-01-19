@@ -1,7 +1,5 @@
 import { Hono } from "hono";
-// import {
-//   evaluate,
-// } from "./evaluation";
+import { evaluate, getRandomPercentage, getUserPercentage } from "./evaluation";
 import { createFlagKey, Flag } from "./flag";
 
 export interface Env {
@@ -13,10 +11,10 @@ export interface FlagPayload {
   percentage?: number;
 }
 
-// export interface EvaluationResult {
-//   evaluation: ReturnType<typeof evaluate>;
-//   identifier: number;
-// }
+export interface EvaluationResult {
+  evaluation: ReturnType<typeof evaluate>;
+  identifier: number;
+}
 
 const OWNER = "public"; // This should be dynamic
 
@@ -61,5 +59,59 @@ app.post("/apps/:app/flag", async ({ env, req, text, json }) => {
     return text("Kaboom!", 500); // Refactor later for better error handler/description
   }
 });
+
+app.get(
+  "/apps/:app/flags/:flagName",
+  async ({ env, req, text, json, notFound }) => {
+    const { app, flagName } = req.param();
+    const flagKey = createFlagKey({ prefix: OWNER, flagName, app });
+
+    try {
+      const flag = await env.EDGE_FLAGS_EXPO.get<Flag>(flagKey, "json");
+
+      if (flag) {
+        return json(flag);
+      }
+
+      return notFound();
+    } catch (error) {
+      console.error({ error });
+
+      return text("Kaboom!", 500);
+    }
+  }
+);
+
+app.get(
+  "/apps/:app/flags/:flagName/evaluation/:identifier?",
+  async ({ env, req, text, json, notFound }) => {
+    const { app, flagName, identifier: requestIdentifier } = req.param();
+    const parsedIdentifier = parseInt(requestIdentifier);
+    const flagKey = createFlagKey({ prefix: OWNER, flagName, app });
+
+    try {
+      const cacheTtl = 300; // TODO: make this configurable at runtime
+      const options: KVNamespaceGetOptions<"json"> = { cacheTtl, type: "json" };
+      const flag = await env.EDGE_FLAGS_EXPO.get<Flag>(flagKey, options);
+
+      if (flag) {
+        const { identifier, percentage } = Number.isNaN(parsedIdentifier)
+          ? getRandomPercentage()
+          : getUserPercentage(parsedIdentifier);
+
+        const evaluation = evaluate(flag, percentage);
+        console.log({ percentage });
+
+        return json<EvaluationResult>({ evaluation, identifier });
+      }
+
+      return notFound();
+    } catch (error) {
+      console.error({ error });
+
+      return text("Kaboom!", 500);
+    }
+  }
+);
 
 export default app;
