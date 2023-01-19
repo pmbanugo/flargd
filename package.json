@@ -14,5 +14,8 @@
     "start:workerd": "wrangler dev --persist --experimental-local",
     "deploy": "wrangler publish",
     "test": "vitest"
+  },
+  "dependencies": {
+    "hono": "^2.7.3"
   }
 }
