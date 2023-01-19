@@ -1,3 +1,7 @@
 name = "flargd"
 main = "src/index.ts"
 compatibility_date = "2023-01-19"
+
+kv_namespaces = [ 
+    { binding = "EDGE_FLAGS_EXPO", id = "5e9ed856e27c483ca03c4d50ef74d70a", preview_id = "964a12f20d3243e89924b2fa90f895ea" } 
+]
