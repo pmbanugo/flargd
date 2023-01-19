@@ -10,6 +10,8 @@
   "private": true,
   "scripts": {
     "start": "wrangler dev",
+    "start:local": "wrangler dev --persist --local",
+    "start:workerd": "wrangler dev --persist --experimental-local",
     "deploy": "wrangler publish",
     "test": "vitest"
   }
