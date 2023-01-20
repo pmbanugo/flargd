@@ -1,9 +1,9 @@
 import { Hono } from "hono";
-import { evaluate, getRandomPercentage, getUserPercentage } from "./evaluation";
+import { calculatePercentage, evaluate } from "./evaluation";
 import { createFlagKey, Flag } from "./flag";
 
 export interface Env {
-  EDGE_FLAGS_EXPO: KVNamespace;
+  FLARGD_STORE: KVNamespace;
 }
 
 export interface FlagPayload {
@@ -13,7 +13,7 @@ export interface FlagPayload {
 
 export interface EvaluationResult {
   evaluation: ReturnType<typeof evaluate>;
-  identifier: number;
+  identifier: number | string;
 }
 
 const OWNER = "public"; // This should be dynamic
@@ -32,7 +32,7 @@ app.post("/apps/:app/flag", async ({ env, req, text, json }) => {
     //save flag
     const flagKey = createFlagKey({ prefix: OWNER, flagName, app });
     const date = new Date().toISOString();
-    const existingFlag = await env.EDGE_FLAGS_EXPO.get<Flag>(flagKey, "json");
+    const existingFlag = await env.FLARGD_STORE.get<Flag>(flagKey, "json");
 
     let flag: Flag;
     if (existingFlag) {
@@ -52,7 +52,7 @@ app.post("/apps/:app/flag", async ({ env, req, text, json }) => {
       };
     }
 
-    await env.EDGE_FLAGS_EXPO.put(flagKey, JSON.stringify(flag));
+    await env.FLARGD_STORE.put(flagKey, JSON.stringify(flag));
     return json(flag, 201);
   } catch (error) {
     console.error({ error });
@@ -67,7 +67,7 @@ app.get(
     const flagKey = createFlagKey({ prefix: OWNER, flagName, app });
 
     try {
-      const flag = await env.EDGE_FLAGS_EXPO.get<Flag>(flagKey, "json");
+      const flag = await env.FLARGD_STORE.get<Flag>(flagKey, "json");
 
       if (flag) {
         return json(flag);
@@ -86,21 +86,18 @@ app.get(
   "/apps/:app/flags/:flagName/evaluation/:identifier?",
   async ({ env, req, text, json, notFound }) => {
     const { app, flagName, identifier: requestIdentifier } = req.param();
-    const parsedIdentifier = parseInt(requestIdentifier);
     const flagKey = createFlagKey({ prefix: OWNER, flagName, app });
 
     try {
       const cacheTtl = 300; // TODO: make this configurable at runtime
       const options: KVNamespaceGetOptions<"json"> = { cacheTtl, type: "json" };
-      const flag = await env.EDGE_FLAGS_EXPO.get<Flag>(flagKey, options);
+      const flag = await env.FLARGD_STORE.get<Flag>(flagKey, options);
 
       if (flag) {
-        const { identifier, percentage } = Number.isNaN(parsedIdentifier)
-          ? getRandomPercentage()
-          : getUserPercentage(parsedIdentifier);
-
+        const { identifier, percentage } = await calculatePercentage(
+          requestIdentifier
+        );
         const evaluation = evaluate(flag, percentage);
-        console.log({ percentage });
 
         return json<EvaluationResult>({ evaluation, identifier });
       }
