@@ -22,16 +22,16 @@ Expect more features and examples in the coming weeks 😎
 Flargd is built on Cloudflare Workers and KV. Follow these instructions to deploy to Workers Platform:
 
 1. Clone this project.
-2. Create a [KV namespace](https://developers.cloudflare.com/workers/wrangler/workers-kv/#create-a-kv-namespace-with-wrangler) and update the `id` in *wrangler.toml* for the `FLARGD_STORE` binding.
+2. Create a [KV namespace](https://developers.cloudflare.com/workers/wrangler/workers-kv/#create-a-kv-namespace-with-wrangler) and update the `id` in _wrangler.toml_ for the `FLARGD_STORE` binding.
 3. Deploy it with the [wrangler CLI](https://github.com/cloudflare/wrangler2) using the command `npx wrangler publish` (or pnpm dlx wrangler publish).
 
-You can try with my [demo URL (https://flargd.pmbanugo.workers.dev/)](https://flargd.pmbanugo.workers.dev/) if you want to experiment without deploying your own Worker. Just make sure to use a unique app name when accessing the API or using the examples. ⚠️ *That API may change its behaviour in the coming weeks but there's already work in progress for a public playground*.
+You can try with my [demo URL (https://flargd.pmbanugo.workers.dev/)](https://flargd.pmbanugo.workers.dev/) if you want to experiment without deploying your own Worker. Just make sure to use a unique app name when accessing the API or using the examples. ⚠️ _That API may change its behaviour in the coming weeks but there's already work in progress for a public playground_.
 
 ## Examples
 
 You'll find most of the examples in [github.com/pmbanugo/flargd-examples](https://github.com/pmbanugo/flargd-examples). Here are a few examples:
 
-- [Vercel Edge Middleware](https://github.com/pmbanugo/flargd-examples/tree/main/edge-functions/vercel-edge-middleware-nextjs). A Next.js app deployed to Vercel. It checks for the feature flag in the Edge Middleware and modifies the request based on the feature flag result.
+- [Vercel Edge Middleware](https://github.com/pmbanugo/flargd-examples/tree/main/edge-functions/vercel-edge-middleware-nextjs): This example show how to do A/B testing at the edge with Vercel Edge Middleware and Flargd.
 
 There'll be more examples in the near future 👨🏽‍💻
 
