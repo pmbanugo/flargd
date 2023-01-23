@@ -16,6 +16,6 @@
     "test": "vitest"
   },
   "dependencies": {
-    "hono": "^2.7.3"
+    "hono": "^2.7.4"
   }
 }
