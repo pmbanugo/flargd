@@ -2,18 +2,13 @@ import { Hono } from "hono";
 import { calculatePercentage, evaluate } from "./evaluation";
 import { createFlagKey, Flag } from "./flag";
 
-export interface Env {
+interface Env {
   FLARGD_STORE: KVNamespace;
 }
 
-export interface FlagPayload {
+interface FlagPayload {
   flagName: string;
   percentage?: number;
-}
-
-export interface EvaluationResult {
-  evaluation: ReturnType<typeof evaluate>;
-  identifier: number | string;
 }
 
 const OWNER = "public"; // This should be dynamic
@@ -94,12 +89,10 @@ app.get(
       const flag = await env.FLARGD_STORE.get<Flag>(flagKey, options);
 
       if (flag) {
-        const { identifier, percentage } = await calculatePercentage(
-          requestIdentifier
-        );
-        const evaluation = evaluate(flag, percentage);
+        const userPercentage = await calculatePercentage(requestIdentifier);
+        const evaluation = evaluate(flag, userPercentage);
 
-        return json<EvaluationResult>({ evaluation, identifier });
+        return json<ReturnType<typeof evaluate>>(evaluation);
       }
 
       return notFound();

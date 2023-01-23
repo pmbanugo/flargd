@@ -1,17 +1,13 @@
 import { Flag } from "./flag";
 
-function percentageForNumber(value: number) {
-  return (value / (0xffffffff + 1)) * 100;
-}
-
 function getRandomPercentage() {
-  const identifier = crypto.getRandomValues(new Uint32Array(1))[0];
-  const percentage = percentageForNumber(identifier);
+  const value = crypto.getRandomValues(new Uint32Array(1))[0];
+  const percentage = (value / (0xffffffff + 1)) * 100;
 
-  return { percentage, identifier };
+  return percentage;
 }
 
-async function percentageByHashSum(identifier: string) {
+async function percentageForIdentifier(identifier: string) {
   const hash = await crypto.subtle.digest(
     "SHA-256",
     new TextEncoder().encode(identifier)
@@ -25,24 +21,11 @@ async function percentageByHashSum(identifier: string) {
   return hashSum % 100;
 }
 
-async function percentageForIdentifier(identifier: number | string) {
-  if (typeof identifier === "number")
-    return {
-      percentage: percentageForNumber(identifier),
-      identifier: String(identifier),
-    };
-
-  return { percentage: await percentageByHashSum(identifier), identifier };
-}
-
 export async function calculatePercentage(identifier?: string) {
   if (identifier == null || identifier.trim() === "")
     return getRandomPercentage();
 
-  const numericIdentifier = Number(identifier);
-  return Number.isNaN(numericIdentifier)
-    ? await percentageForIdentifier(identifier)
-    : await percentageForIdentifier(numericIdentifier);
+  return percentageForIdentifier(identifier);
 }
 
 export function evaluate(
