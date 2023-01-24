@@ -15,16 +15,15 @@ const OWNER = "public"; // This should be dynamic
 
 const app = new Hono<{ Bindings: Env }>();
 
-app.get("/", (c) => c.json("Hello! Flargd Edge Feature Flags!"));
+app.get("/", (c) => c.text("Hello! Flargd Edge Feature Flags!"));
 
 /** Create and update a flag */
 app.post("/apps/:app/flag", async ({ env, req, text, json }) => {
   try {
-    // TODO: validate input using zod (it might be better to just do it without zod ATM because it's the only place I need validation for now.)
+    // TODO: validate input
     const { flagName, percentage } = await req.json<FlagPayload>();
     const { app } = req.param();
 
-    //save flag
     const flagKey = createFlagKey({ prefix: OWNER, flagName, app });
     const date = new Date().toISOString();
     const existingFlag = await env.FLARGD_STORE.get<Flag>(flagKey, "json");

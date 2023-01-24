@@ -7,7 +7,6 @@ export interface Flag {
   updatedAt: string;
 }
 
-// TODO: write test for function
 export function createFlagKey({
   prefix = "public",
   app,
