@@ -29,7 +29,7 @@ export async function calculatePercentage(identifier?: string) {
 }
 
 export function evaluate(
-  { percentage }: Flag,
+  { percentage }: Pick<Flag, "percentage">,
   userPercentage: number
 ): { enable: boolean } {
   if (percentage === 0) return { enable: false };
