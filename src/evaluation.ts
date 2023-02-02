@@ -1,4 +1,5 @@
-import { Flag } from "./flag";
+import { comparator } from "./comparator";
+import type { FlagPercentage } from "./flag";
 
 function getRandomPercentage() {
   const value = crypto.getRandomValues(new Uint32Array(1))[0];
@@ -29,12 +30,22 @@ export async function calculatePercentage(identifier?: string) {
 }
 
 export function evaluate(
-  { percentage }: Pick<Flag, "percentage">,
-  userPercentage: number
+  { amount, conditions }: FlagPercentage,
+  userPercentage: number,
+  context: Record<string, string>
 ): { enable: boolean } {
-  if (percentage === 0) return { enable: false };
-  if (percentage === 100) return { enable: true };
+  if (amount === 0) return { enable: false };
+  if (amount === 100 && conditions?.length === 0) return { enable: true };
 
-  const enable = userPercentage <= percentage;
+  const pass = conditions.reduce(
+    (prev, { condition, target, attribute }) =>
+      prev &&
+      !!context[attribute] &&
+      comparator[condition](context[attribute], target),
+    true
+  );
+
+  const enable = userPercentage <= amount && pass;
+
   return { enable };
 }

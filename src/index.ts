@@ -89,7 +89,11 @@ app.get(
 
       if (flag) {
         const userPercentage = await calculatePercentage(requestIdentifier);
-        const evaluation = evaluate(flag, userPercentage);
+        const evaluation = evaluate(
+          flag.percentage,
+          userPercentage,
+          getCfProperties(req)
+        );
 
         return json<ReturnType<typeof evaluate>>(evaluation);
       }
