@@ -6,7 +6,7 @@ Flargd is a feature flag application that you can use to implement feature toggl
 
 ## Features 💰
 
-- **Fast** ⚡️ Less than 120ms RTT
+- **Fast** ⚡️ Less than 80ms RTT
 - **Minimal & Lightweight** 🧘🏽‍♀️ Minimalistic API that gets the job done
 - **Edge Runtime** ⚙️ Runs close to your users and application
 - **Self-hostable** 👩🏽‍💻
