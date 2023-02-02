@@ -1,6 +1,7 @@
 import { Router } from "itty-router";
 import { calculatePercentage, evaluate } from "./evaluation";
-import { createFlagKey, Flag, FlagPercentage } from "./flag";
+import { createFlagKey } from "./flag";
+import type { Flag, FlagPercentage } from "./flag";
 import { getCfProperties } from "./util/request";
 import type { Env } from "./util/request";
 import { json, notFound, text } from "./util/response";
@@ -10,7 +11,7 @@ interface FlagPayload {
   percentage: FlagPercentage;
 }
 
-const OWNER = "public"; // This should be dynamic
+const OWNER = "public"; // TODO: This should be dynamic
 
 const router = Router();
 
