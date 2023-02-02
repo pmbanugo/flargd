@@ -1,28 +1,27 @@
-import { Hono } from "hono";
+import { Router } from "itty-router";
 import { calculatePercentage, evaluate } from "./evaluation";
-import { createFlagKey, Flag } from "./flag";
-
-interface Env {
-  FLARGD_STORE: KVNamespace;
-}
+import { createFlagKey, Flag, FlagPercentage } from "./flag";
+import { getCfProperties } from "./util/request";
+import type { Env } from "./util/request";
+import { json, notFound, text } from "./util/response";
 
 interface FlagPayload {
   flagName: string;
-  percentage?: number;
+  percentage: FlagPercentage;
 }
 
 const OWNER = "public"; // This should be dynamic
 
-const app = new Hono<{ Bindings: Env }>();
+const router = Router();
 
-app.get("/", (c) => c.text("Hello! Flargd Edge Feature Flags!"));
+router.get("/", () => new Response("Hello! Flargd Edge Feature Flags!"));
 
 /** Create and update a flag */
-app.post("/apps/:app/flag", async ({ env, req, text, json }) => {
+router.post("/apps/:app/flag", async (req, env: Env) => {
   try {
     // TODO: validate input
-    const { flagName, percentage } = await req.json<FlagPayload>();
-    const { app } = req.param();
+    const { flagName, percentage } = (await req.json()) as FlagPayload;
+    const { app } = req.params;
 
     const flagKey = createFlagKey({ prefix: OWNER, flagName, app });
     const date = new Date().toISOString();
@@ -32,13 +31,13 @@ app.post("/apps/:app/flag", async ({ env, req, text, json }) => {
     if (existingFlag) {
       flag = {
         ...existingFlag,
-        percentage: percentage ?? 100,
+        percentage,
         updatedAt: date,
       };
     } else {
       flag = {
         name: flagName,
-        percentage: percentage ?? 100,
+        percentage,
         createdAt: date,
         updatedAt: date,
         app,
@@ -54,32 +53,29 @@ app.post("/apps/:app/flag", async ({ env, req, text, json }) => {
   }
 });
 
-app.get(
-  "/apps/:app/flags/:flagName",
-  async ({ env, req, text, json, notFound }) => {
-    const { app, flagName } = req.param();
-    const flagKey = createFlagKey({ prefix: OWNER, flagName, app });
+router.get("/apps/:app/flags/:flagName", async (req, env: Env) => {
+  const { app, flagName } = req.params;
+  const flagKey = createFlagKey({ prefix: OWNER, flagName, app });
 
-    try {
-      const flag = await env.FLARGD_STORE.get<Flag>(flagKey, "json");
+  try {
+    const flag = await env.FLARGD_STORE.get<Flag>(flagKey, "json");
 
-      if (flag) {
-        return json(flag);
-      }
-
-      return notFound();
-    } catch (error) {
-      console.error({ error });
-
-      return text("Kaboom!", 500);
+    if (flag) {
+      return json(flag);
     }
-  }
-);
 
-app.get(
+    return notFound();
+  } catch (error) {
+    console.error({ error });
+
+    return text("Kaboom!", 500);
+  }
+});
+
+router.get(
   "/apps/:app/flags/:flagName/evaluation/:identifier?",
-  async ({ env, req, text, json, notFound }) => {
-    const { app, flagName, identifier: requestIdentifier } = req.param();
+  async (req, env: Env) => {
+    const { app, flagName, identifier: requestIdentifier } = req.params;
     const flagKey = createFlagKey({ prefix: OWNER, flagName, app });
 
     try {
@@ -107,4 +103,6 @@ app.get(
   }
 );
 
-export default app;
+export default {
+  fetch: router.handle,
+};

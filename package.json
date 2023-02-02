@@ -16,6 +16,6 @@
     "test": "vitest"
   },
   "dependencies": {
-    "hono": "^2.7.4"
+    "itty-router": "^3.0.11"
   }
 }

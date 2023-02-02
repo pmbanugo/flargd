@@ -2,13 +2,13 @@ lockfileVersion: 5.4
 
 specifiers:
   '@cloudflare/workers-types': ^4.20221111.1
-  hono: ^2.7.4
+  itty-router: ^3.0.11
   typescript: ^4.9.4
   vitest: ^0.27.2
   wrangler: 2.8.0
 
 dependencies:
-  hono: 2.7.4
+  itty-router: 3.0.11
 
 devDependencies:
   '@cloudflare/workers-types': 4.20221111.1
@@ -882,11 +882,6 @@ packages:
       function-bind: 1.1.1
     dev: true
 
-  /hono/2.7.4:
-    resolution: {integrity: sha512-5ThPMoqLgeaxZ3CrN19YRgDuxhmoKfiorqj2uX0Vv36fyINrN+kBZBd1y1bCbknJzmj/gXIFQpMcjeuWQKUY+A==}
-    engines: {node: '>=16.0.0'}
-    dev: false
-
   /html-rewriter-wasm/0.4.1:
     resolution: {integrity: sha512-lNovG8CMCCmcVB1Q7xggMSf7tqPCijZXaH4gL6iE8BFghdQCbaY5Met9i1x2Ex8m/cZHDUtXK9H6/znKamRP8Q==}
     dev: true
@@ -938,6 +933,10 @@ packages:
   /isexe/2.0.0:
     resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
     dev: true
+
+  /itty-router/3.0.11:
+    resolution: {integrity: sha512-vWsoHBi2CmU15YzyUeHjRfjdySL2jqZQKA9jP1LXkBcLJAo0KQNVlQMvhtzG0mzABhVYifeBF97UkrrpuTCWYQ==}
+    dev: false
 
   /jsonc-parser/3.2.0:
     resolution: {integrity: sha512-gfFQZrcTc8CnKXp6Y4/CBT3fTc0OVuDofpre4aEeEpSBPV5X5v4+Vmx+8snU7RLPrNHPKSgLxGo9YuQzz20o+w==}
