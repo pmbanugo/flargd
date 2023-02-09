@@ -9,7 +9,7 @@ import { CF_GEOGRAPHIC_PROPERTIES, CONDITIONS } from "~/constant";
 import type { ActionArgs } from "@remix-run/cloudflare";
 import { redirect } from "@remix-run/cloudflare";
 
-export const action = async ({ request, context }: ActionArgs) => {
+export const action = async ({ request }: ActionArgs) => {
   const formData = await request.formData();
   //TODO: Validate Data
 
