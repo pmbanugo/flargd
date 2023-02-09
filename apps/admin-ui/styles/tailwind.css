@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .tagify {
+    @apply w-1/2 mt-0 px-0.5 border-0 border-b-2 border-gray-200 focus:ring-0 focus:border-black;
+  }
+}
