@@ -3,7 +3,7 @@ import Main from "~/components/layout/main";
 import Heading from "~/components/layout/heading";
 import Tagify from "@yaireo/tagify";
 import { useRef, useState } from "react";
-import { TrashIcon } from "~/components/icons";
+import { PlusIcon, TrashIcon } from "~/components/icons";
 import type { Condition, ConditionKeys, ContionalAttribute } from "~/constant";
 import { CF_GEOGRAPHIC_PROPERTIES, CONDITIONS } from "~/constant";
 import type { ActionArgs } from "@remix-run/cloudflare";
@@ -20,17 +20,16 @@ export const action = async ({ request }: ActionArgs) => {
   const conditions = formData.getAll("condition") as ConditionKeys[];
   const targets = formData.getAll("tags") as string[];
 
-  const deducedConditions = attributes.reduce<Condition[]>(
-    (previous, current, index) => {
+  const deducedConditions = attributes
+    .filter((x) => !!x)
+    .reduce<Condition[]>((previous, current, index) => {
       const condition = conditions[index];
       const target = ["in_list", "not_in_list"].includes(condition)
         ? targets[index].split(",")
         : targets[index];
       previous.push({ attribute: current, condition, target });
       return previous;
-    },
-    []
-  );
+    }, []);
   const flagPercentage = {
     amount: Number(percentage),
     conditions: deducedConditions,
@@ -83,14 +82,14 @@ export default function Index() {
           name="attribute"
           className="w-1/5 mt-0 px-0.5 border-0 border-b-2 border-gray-200 focus:ring-0 focus:border-black"
         >
-          <option>Select Attribute</option>
+          <option value={""}>Select Attribute</option>
           <AttributeOptions />
         </select>
         <select
           name="condition"
           className=" w-1/5 mt-0 px-0.5 border-0 border-b-2 border-gray-200 focus:ring-0 focus:border-black"
         >
-          <option>Select Condition</option>
+          <option value={""}>Select Condition</option>
           <ConditionOptions />
         </select>
 
@@ -170,19 +169,7 @@ export default function Index() {
                     type="button"
                     className="inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                   >
-                    <svg
-                      className="-ml-1 mr-2 h-5 w-5"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                      xmlns="http://www.w3.org/2000/svg"
-                      aria-hidden="true"
-                    >
-                      <path
-                        clipRule="evenodd"
-                        fillRule="evenodd"
-                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-11.25a.75.75 0 00-1.5 0v2.5h-2.5a.75.75 0 000 1.5h2.5v2.5a.75.75 0 001.5 0v-2.5h2.5a.75.75 0 000-1.5h-2.5v-2.5z"
-                      />
-                    </svg>
+                    <PlusIcon />
                     Add
                   </button>
                 </div>
