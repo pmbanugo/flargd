@@ -8,6 +8,7 @@ import { json, notFound, text } from "./util/response";
 
 interface FlagPayload {
   flagName: string;
+  description?: string;
   percentage: FlagPercentage;
 }
 
@@ -21,7 +22,8 @@ router.get("/", () => new Response("Hello! Flargd Edge Feature Flags!"));
 router.post("/apps/:app/flag", async (req, env: Env) => {
   try {
     // TODO: validate input
-    const { flagName, percentage } = (await req.json()) as FlagPayload;
+    const { flagName, description, percentage } =
+      (await req.json()) as FlagPayload;
     const { app } = req.params;
 
     const flagKey = createFlagKey({ prefix: OWNER, flagName, app });
@@ -33,11 +35,13 @@ router.post("/apps/:app/flag", async (req, env: Env) => {
       flag = {
         ...existingFlag,
         percentage,
+        description,
         updatedAt: date,
       };
     } else {
       flag = {
         name: flagName,
+        description,
         percentage,
         createdAt: date,
         updatedAt: date,

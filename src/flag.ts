@@ -10,6 +10,7 @@ export type Condition =
 
 export interface Flag {
   name: string;
+  description?: string;
   percentage: FlagPercentage;
   app: string;
   owner: string;
