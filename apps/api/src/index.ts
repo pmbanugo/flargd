@@ -12,6 +12,10 @@ interface FlagPayload {
   percentage: FlagPercentage;
 }
 
+type Metadata = Omit<Flag, "percentage" | "owner" | "app"> & {
+  percentage: number;
+};
+
 const OWNER = "public"; // TODO: This should be dynamic
 
 const router = Router();
@@ -28,10 +32,19 @@ router.post("/apps/:app/flag", async (req, env: Env) => {
 
     const flagKey = createFlagKey({ prefix: OWNER, flagName, app });
     const date = new Date().toISOString();
-    const existingFlag = await env.FLARGD_STORE.get<Flag>(flagKey, "json");
+    const { value: existingFlag, metadata: existingMeta } =
+      await env.FLARGD_STORE.getWithMetadata<Flag, Metadata>(flagKey, "json");
 
     let flag: Flag;
-    if (existingFlag) {
+    let metadata: Metadata;
+
+    if (existingFlag && existingMeta) {
+      metadata = {
+        ...existingMeta,
+        percentage: percentage.amount,
+        description,
+        updatedAt: date,
+      };
       flag = {
         ...existingFlag,
         percentage,
@@ -39,22 +52,47 @@ router.post("/apps/:app/flag", async (req, env: Env) => {
         updatedAt: date,
       };
     } else {
-      flag = {
+      metadata = {
         name: flagName,
         description,
-        percentage,
+        percentage: percentage.amount,
         createdAt: date,
         updatedAt: date,
-        app,
-        owner: OWNER,
       };
+
+      flag = { ...metadata, percentage, app, owner: OWNER };
     }
 
-    await env.FLARGD_STORE.put(flagKey, JSON.stringify(flag));
+    await env.FLARGD_STORE.put(flagKey, JSON.stringify(flag), { metadata });
     return json(flag, 201);
   } catch (error) {
     console.error({ error });
     return text("Kaboom!", 500); // Refactor later for better error handler/description
+  }
+});
+
+router.get("/apps/:app/flags", async (req, env: Env) => {
+  const { app } = req.params;
+  const prefix = `${OWNER}:${app}:`;
+
+  try {
+    const { keys } = await env.FLARGD_STORE.list<Metadata>({ prefix });
+
+    return json(
+      keys.map(
+        ({ metadata }) =>
+          metadata && {
+            name: metadata.name,
+            description: metadata.description,
+            createdAt: metadata.createdAt,
+            percentage: metadata.percentage,
+          }
+      )
+    );
+  } catch (error) {
+    console.error({ error });
+
+    return text("Kaboom!", 500);
   }
 });
 

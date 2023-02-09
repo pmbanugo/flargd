@@ -10,6 +10,9 @@ kv_namespaces = [
 ]
 
 [vars]
+ADMIN_URL = "http://127.0.0.1:64920"
+
+[env.production.vars]
 ADMIN_URL = "example.com"
 
 [site]
