@@ -1,9 +1,12 @@
 import Main from "~/components/layout/main";
 import Heading from "~/components/layout/heading";
 import type { Condition, ConditionKeys, ContionalAttribute } from "~/constant";
-import type { ActionArgs } from "@remix-run/cloudflare";
+import type { ActionArgs, LoaderArgs } from "@remix-run/cloudflare";
+import { json } from "@remix-run/cloudflare";
 import { redirect } from "@remix-run/cloudflare";
 import FlagForm from "~/components/flag-form";
+import { useLoaderData } from "@remix-run/react";
+import type { Flag } from "~/types/flag";
 
 export const action = async ({ request }: ActionArgs) => {
   const formData = await request.formData();
@@ -44,15 +47,32 @@ export const action = async ({ request }: ActionArgs) => {
   }
 
   //TODO: return error messages for failures
-  return redirect("/create");
+  throw new Response("Error saving data", {
+    status: 500,
+  });
 };
 
-export default function Create() {
+export const loader = async ({ params }: LoaderArgs) => {
+  const { flagName } = params;
+  const res = await fetch(`${ADMIN_URL}/apps/default/flags/${flagName}`, {
+    mode: "no-cors",
+  });
+  if (res.ok) {
+    return json(await res.json<Flag>());
+  }
+
+  throw new Response("Not Found", {
+    status: 404,
+  });
+};
+
+export default function Edit() {
+  const flag = useLoaderData<typeof loader>();
   return (
     <>
-      <Heading title="Create Flag" />
+      <Heading title="Edit Flag" />
       <Main>
-        <FlagForm />
+        <FlagForm flag={flag} />
       </Main>
     </>
   );
