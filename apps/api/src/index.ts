@@ -115,6 +115,20 @@ router.get("/apps/:app/flags/:flagName", async (req, env: Env) => {
   }
 });
 
+router.delete("/apps/:app/flags/:flagName", async (req, env: Env) => {
+  const { app, flagName } = req.params;
+  const flagKey = createFlagKey({ prefix: OWNER, flagName, app });
+
+  try {
+    await env.FLARGD_STORE.delete(flagKey);
+    return new Response(undefined, { status: 204 });
+  } catch (error) {
+    console.error({ error });
+
+    return text("Kaboom!", 500);
+  }
+});
+
 router.get(
   "/apps/:app/flags/:flagName/evaluation/:identifier?",
   async (req, env: Env) => {

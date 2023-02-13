@@ -1,6 +1,7 @@
-import { json } from "@remix-run/cloudflare";
-import { Link, useLoaderData } from "@remix-run/react";
-import { PlusIcon } from "~/components/icons";
+import type { ActionArgs } from "@remix-run/cloudflare";
+import { json, redirect } from "@remix-run/cloudflare";
+import { Form, Link, useLoaderData } from "@remix-run/react";
+import { PlusIcon, TrashIcon } from "~/components/icons";
 import Main from "~/components/layout/main";
 import Heading from "../components/layout/heading";
 
@@ -21,6 +22,24 @@ export const loader = async () => {
   }
 
   return json<Flag[]>(await response.json());
+};
+
+export const action = async ({ request }: ActionArgs) => {
+  const appName = "default";
+  const formData = await request.formData();
+  //TODO: Validate Data
+
+  const flagName = formData.get("flagName");
+
+  const res = await fetch(`${ADMIN_URL}/apps/${appName}/flags/${flagName}`, {
+    method: "DELETE",
+  });
+
+  if (!res.ok) {
+    return json(res.status);
+  }
+
+  return redirect("/");
 };
 
 export default function Index() {
@@ -80,6 +99,16 @@ export default function Index() {
                         >
                           Edit
                         </a>
+                        <Form method="post" className="inline-block">
+                          <input
+                            type="hidden"
+                            name="flagName"
+                            value={flag.name}
+                          />
+                          <button type="submit" className="">
+                            <TrashIcon className="h-4 text-gray-500 dark:text-white cursor-pointer inline-block ml-6" />
+                          </button>
+                        </Form>
                       </td>
                     </tr>
                   );
