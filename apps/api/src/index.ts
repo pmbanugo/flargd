@@ -23,7 +23,7 @@ const router = Router();
 router.get("/", () => new Response("Hello! Flargd Edge Feature Flags!"));
 
 /** Create and update a flag */
-router.post("/apps/:app/flag", async (req, env: Env) => {
+router.post("/apps/:app/flags", async (req, env: Env) => {
   try {
     // TODO: validate input
     const { flagName, description, percentage } =
