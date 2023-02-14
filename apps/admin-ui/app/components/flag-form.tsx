@@ -11,10 +11,8 @@ export default function FlagForm({ flag }: { flag?: Flag }) {
 
   const [ids, setIds] = useState(
     shouldEditConditions
-      ? flag.percentage.conditions.map(
-          (_, index) => `${Math.random().toString(32).slice(2)}_${index}`
-        )
-      : [crypto.randomUUID()]
+      ? flag.percentage.conditions.map((_, index) => `${randomId()}_${index}`)
+      : [randomId()]
   );
 
   const renderConditions = () =>
@@ -127,7 +125,7 @@ export default function FlagForm({ flag }: { flag?: Flag }) {
             {renderConditions()}
             <div className="mt-2">
               <button
-                onClick={() => setIds([...ids, crypto.randomUUID()])}
+                onClick={() => setIds([...ids, randomId()])}
                 type="button"
                 className="inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
               >
@@ -169,3 +167,7 @@ const ConditionOptions = () => (
     ))}
   </>
 );
+
+function randomId() {
+  return Math.random().toString(32).slice(2);
+}
