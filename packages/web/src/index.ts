@@ -11,11 +11,12 @@ const DEFAULT_APP = "default";
 export function createClient(
   context: Context = { host: DEFAULT_HOST, app: DEFAULT_APP }
 ) {
+  const host = context.host ?? DEFAULT_HOST,
+    app = context.app ?? DEFAULT_APP,
+    distinctId = context.distinctId,
+    userContext = context.userContext;
+
   return {
-    _host: context.host ?? DEFAULT_HOST,
-    _app: context.app ?? DEFAULT_APP,
-    _distinctId: context.distinctId,
-    _userContext: context.userContext,
     /**
      * Returns the evaluation result of a flag.
      *
@@ -26,9 +27,9 @@ export function createClient(
      */
     async get(name: string) {
       try {
-        let url = `${this._host}/apps/${this._app}/flags/${name}/evaluation`;
-        if (this._distinctId) {
-          url = `${url}/${this._distinctId}`;
+        let url = `${host}/apps/${app}/flags/${name}/evaluation`;
+        if (distinctId) {
+          url = `${url}/${distinctId}`;
         }
 
         const res = await fetch(url);
