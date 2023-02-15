@@ -130,7 +130,7 @@ router.delete("/apps/:app/flags/:flagName", async (req, env: Env) => {
 });
 
 router.get(
-  "/apps/:app/flags/:flagName/evaluation/:identifier?",
+  "/apps/:app/evaluation/:flagName/:identifier?",
   async (req, env: Env) => {
     const { app, flagName, identifier: requestIdentifier } = req.params;
     const flagKey = createFlagKey({ prefix: OWNER, flagName, app });

@@ -27,7 +27,7 @@ export function createClient(
      */
     async get(name: string) {
       try {
-        let url = `${host}/apps/${app}/flags/${name}/evaluation`;
+        let url = `${host}/apps/${app}/evaluation/${name}`;
         if (distinctId) {
           url = `${url}/${distinctId}`;
         }
