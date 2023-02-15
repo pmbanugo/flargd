@@ -2,7 +2,7 @@
 
 Flargd is a feature flag application that you can use to implement feature toggling in your application. You can self-host it on Cloudflare Workers, and use it in your edge or serverless application (but not limited to these environments/runtimes).
 
-> ⚠️ This is still in early development and I'm building it in [public, on Twitter](https://twitter.com/p_mbanugo/status/1616467436919742465).
+> ⚠️ Flargd is currently in beta. Expect breaking changes prior to v1.0. You can follow my weekly update [publicly, on Twitter](https://twitter.com/p_mbanugo/status/1616467436919742465).
 
 ## Features 💰
 
