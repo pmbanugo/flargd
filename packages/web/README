@@ -21,7 +21,7 @@ const client = createClient({ host: EDGE_FLAGS_HOST });
 
 The `createClient()` function takes a context object which is used to configure the client. See the next section for more info.
 
-After the client in created, you can retrieve a feature flag using the `get()` method.
+After the client is created, you can retrieve a feature flag using the `get()` method.
 
 ```javascript
 const flag = await client.get("feature-name");
@@ -45,6 +45,6 @@ interface Context {
 
 If `app` and `host` are skipped, a default value will be used. For `app`, it defaults to **default**, and for `host` it's **https://api.flargd.dev**.
 
-The `distinctId` is optional and has no default. It is used by flargd as part of the evaluation criteria for a flag. If it is present, you are guaranteed to make get the same result each time you call `get()`. If absent, the server generates a random identifier for each call to the `get()` function. If you want a consistent result, it's adviced to initialise with a value for `distinctId`.
+The `distinctId` is optional and has no default. It is used by flargd as part of the evaluation criteria for a flag. If it is present, you are guaranteed to make get the same result each time you call `get()`. If absent, the server generates a random identifier for each call to the `get()` function. If you want a consistent result, it's advised to initialise with a value for `distinctId`.
 
 You can use a unique identifier for the user, for example, the user ID in your database or the session ID if you want to keep it consistent only for the session. You can also generate and cache a random identifier for the user using `crypto.randomUUID()`
