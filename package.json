@@ -2,7 +2,10 @@
   "name": "flargd-monorepo",
   "private": true,
   "description": "",
-  "scripts": {},
+  "scripts": {
+    "ci:version": "changeset version",
+    "ci:publish": "pnpm publish -r"
+  },
   "keywords": [],
   "engines": {
     "node": ">=18.10"
