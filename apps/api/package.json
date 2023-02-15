@@ -1,6 +1,5 @@
 {
   "name": "flargd",
-  "version": "0.2.0",
   "private": true,
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20221111.1",
