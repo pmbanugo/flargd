@@ -1,4 +1,4 @@
-## Flargd - @flargd/web
+# Flargd - @flargd/web
 
 This is the web client for [Flargd](https://github.com/pmbanugo/flargd). It can be used anywhere JavaScript runs (i.e browsers, Node.js, and any Edge runtime).
 

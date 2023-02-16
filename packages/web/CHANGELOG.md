@@ -4,4 +4,4 @@
 
 ### Minor Changes
 
-- This changeset includes the first client library for Flargd.
+- Initial release of the client library for Flargd. It includes a `get()` function to retrieve a flag.
