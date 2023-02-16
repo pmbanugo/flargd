@@ -11,11 +11,11 @@ Flargd is a feature flag application that you can use to implement feature toggl
 - **Edge Runtime** ⚙️ Runs close to your users and application
 - **Self-hostable** 👩🏽‍💻
 - **Multi-project** support: You can configure feature flags for different applications you own
-- Admin UI (Coming soon)
-- Client SDK (Coming soon)
-- React Hooks (Coming in the next 2 weeks)
+- Admin UI
+- Web client/SDK
+- React Hooks and other framework integration (Coming soon)
 
-Expect more features and examples in the coming weeks 😎
+> This project aims to be minimal, lightweight, fast, and easy to deploy and use on Edge and JavaScript runtimes. It's not meant to compete with other feature flagging software in terms of features. Therefore, you'd likely use a different approach to achieve similar things with Flargd.
 
 ## Hosting
 
