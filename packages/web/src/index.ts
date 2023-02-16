@@ -43,7 +43,7 @@ export function createClient(
         return (await res.json()) as { enable: boolean };
       } catch (error) {
         console.error(`Flargd ⚠️: Error fetching the feature flag [${name}].`);
-        return null;
+        return { enable: false, error: true };
       }
     },
     /**
@@ -55,7 +55,9 @@ export function createClient(
      * @throws Throws error if there are less than two items (flag names) in the array
      *
      */
-    async getMany(names: string[]) {
+    async getMany(
+      names: string[]
+    ): Promise<Record<string, { enable: boolean }> | { error: boolean }> {
       if (!Array.isArray(names) || names.length < 2) {
         throw new Error(
           "There should be at least two feature flag names passed as argument"
@@ -78,12 +80,12 @@ export function createClient(
           throw new Error("Flargd: Error Fetching Data");
         }
 
-        return (await res.json()) as Record<string, { enable: boolean }>;
+        return await res.json();
       } catch (error) {
         console.error(
           `Flargd ⚠️: Error fetching the feature flags [${names}] failed`
         );
-        return null;
+        return { error: true };
       }
     },
   };
