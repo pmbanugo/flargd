@@ -33,21 +33,57 @@ export function createClient(
         }
 
         const res = await fetch(url);
-
         if (!res.ok) {
           console.info(
             `Flargd ⚠️: Fetch request to retrieve the feature [${name}] failed`
           );
+          throw new Error("Flargd: Error Fetching Data");
         }
 
-        const data = (await res.json()) as { enable: boolean };
+        return (await res.json()) as { enable: boolean };
+      } catch (error) {
+        console.error(`Flargd ⚠️: Error fetching the feature flag [${name}].`);
+        return null;
+      }
+    },
+    /**
+     * Returns the evaluation result of the flags.
+     *
+     *
+     * @param names - The names of the feature flag to retrieve. There should be at least 2 items in the array
+     * @returns The feature flags
+     * @throws Throws error if there are less than two items (flag names) in the array
+     *
+     */
+    async getMany(names: string[]) {
+      if (!Array.isArray(names) || names.length < 2) {
+        throw new Error(
+          "There should be at least two feature flag names passed as argument"
+        );
+      }
 
-        return data;
+      try {
+        const base = `${host}/apps/${app}/evaluations${
+          distinctId ? "/" + distinctId : ""
+        }`;
+        const url = new URL(base);
+        names.forEach((name) => url.searchParams.append("flags", name));
+
+        const res = await fetch(url);
+
+        if (!res.ok) {
+          console.info(
+            `Flargd ⚠️: Fetch request to retrieve the features [${names}] failed`
+          );
+          throw new Error("Flargd: Error Fetching Data");
+        }
+
+        return (await res.json()) as Record<string, { enable: boolean }>;
       } catch (error) {
         console.error(
-          `Flargd ⚠️: Fetch request to retrieve the feature [${name}] failed`
+          `Flargd ⚠️: Error fetching the feature flags [${names}] failed`
         );
-        return { enable: false };
+        return null;
       }
     },
   };

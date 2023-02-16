@@ -129,6 +129,49 @@ router.delete("/apps/:app/flags/:flagName", async (req, env: Env) => {
   }
 });
 
+router.get("/apps/:app/evaluations/:identifier?", async (req, env: Env) => {
+  const { app, identifier: requestIdentifier } = req.params;
+  const { flags: flagNames } = req.query;
+  if (!flagNames || !Array.isArray(flagNames)) {
+    return text("Expected flags search query to be at least 2", 400);
+  }
+  //TODO: Add check to remove duplicate flag names.
+
+  try {
+    const cacheTtl = 300; // TODO: make this configurable at runtime
+    const options: KVNamespaceGetOptions<"json"> = { cacheTtl, type: "json" };
+    const cfProperties = getCfProperties(req);
+
+    const evaluatedFlags = flagNames.map(async (flagName) => {
+      const flagKey = createFlagKey({ prefix: OWNER, flagName, app });
+      const [flag, userPercentage] = await Promise.all([
+        env.FLARGD_STORE.get<Flag>(flagKey, options),
+        calculatePercentage(requestIdentifier),
+      ]);
+
+      if (flag) {
+        return [
+          flagName,
+          evaluate(flag.percentage, userPercentage, cfProperties),
+        ] as const;
+      }
+    });
+
+    const result: Record<string, ReturnType<typeof evaluate>> = {};
+    for await (const flag of evaluatedFlags) {
+      if (flag) {
+        result[flag[0]] = flag[1];
+      }
+    }
+
+    return json(result);
+  } catch (error) {
+    console.error({ error });
+
+    return text("Kaboom!", 500);
+  }
+});
+
 router.get(
   "/apps/:app/evaluation/:flagName/:identifier?",
   async (req, env: Env) => {
