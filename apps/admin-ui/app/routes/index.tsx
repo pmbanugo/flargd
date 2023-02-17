@@ -14,7 +14,7 @@ interface Flag {
 
 export const loader = async () => {
   const appName = "default";
-  const response = await fetch(`${ADMIN_URL}/apps/${appName}/flags`);
+  const response = await fetch(`${CORE_API}/apps/${appName}/flags`);
 
   if (!response.ok) {
     //TODO: return an error
@@ -31,7 +31,7 @@ export const action = async ({ request }: ActionArgs) => {
 
   const flagName = formData.get("flagName");
 
-  const res = await fetch(`${ADMIN_URL}/apps/${appName}/flags/${flagName}`, {
+  const res = await fetch(`${CORE_API}/apps/${appName}/flags/${flagName}`, {
     method: "DELETE",
   });
 

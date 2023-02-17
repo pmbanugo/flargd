@@ -33,7 +33,7 @@ export const action = async ({ request }: ActionArgs) => {
 
   const data = { flagName, description, percentage: flagPercentage };
 
-  const res = await fetch(`${ADMIN_URL}/apps/default/flags`, {
+  const res = await fetch(`${CORE_API}/apps/default/flags`, {
     mode: "no-cors",
     method: "POST",
     body: JSON.stringify(data),

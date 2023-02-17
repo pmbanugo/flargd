@@ -36,7 +36,7 @@ export const action = async ({ request }: ActionArgs) => {
 
   const data = { flagName, description, percentage: flagPercentage };
 
-  const res = await fetch(`${ADMIN_URL}/apps/default/flags`, {
+  const res = await fetch(`${CORE_API}/apps/default/flags`, {
     mode: "no-cors",
     method: "POST",
     body: JSON.stringify(data),
@@ -54,7 +54,7 @@ export const action = async ({ request }: ActionArgs) => {
 
 export const loader = async ({ params }: LoaderArgs) => {
   const { flagName } = params;
-  const res = await fetch(`${ADMIN_URL}/apps/default/flags/${flagName}`, {
+  const res = await fetch(`${CORE_API}/apps/default/flags/${flagName}`, {
     mode: "no-cors",
   });
   if (res.ok) {
