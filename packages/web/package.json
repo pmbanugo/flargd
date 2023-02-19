@@ -12,6 +12,11 @@
       "types": "./dist/index.d.ts"
     }
   },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
   "scripts": {
     "build": "tsup",
     "watch": "pnpm run build --watch src",
