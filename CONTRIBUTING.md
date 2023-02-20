@@ -8,7 +8,7 @@ All types of contributions are encouraged and valued. See the [Table of Contents
 
 > And if you like the project, but just don't have time to contribute, that's fine. There are other easy ways to support the project and show your appreciation, which we would also be very happy about:
 >
-> - 🌟 Star the project
+> - 🤩 Star the project
 > - Tweet about it, and optionally tag me [@p_mbanugo](https://twitter.com/p_mbanugo)
 > - 📖 Refer this project in your project's README
 > - 🎙 Mention the project at local meetups and tell your friends/colleagues
@@ -173,6 +173,7 @@ Follow these instructions to setup your workspace for contributions:
 3. Then create your own feature branch based on your dev branch.
 4. At the root of the project, run `pnpm install`.
 5. Make the changes needed.
+<!-- Maybe add more steps/description for setting up the local environment  -->
 6. Send PR 🚀
 
 If you changed any of the package, run `pnpm changeset` at the root of the project and follow the instruction to select if it's a patch or minor release and add a summary. You can edit the change set file with the list of changes made.
