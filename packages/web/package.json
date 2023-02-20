@@ -1,0 +1,37 @@
+{
+  "name": "@flargd/web",
+  "version": "0.2.0",
+  "description": "",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/esm/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "watch": "pnpm run build --watch src",
+    "prepublishOnly": "pnpm run build"
+  },
+  "keywords": [
+    "feature flags",
+    "edge flags",
+    "feature management",
+    "feature flag management"
+  ],
+  "author": "Peter Mbanugo",
+  "license": "Apache 2.0",
+  "devDependencies": {
+    "tsup": "^6.6.3",
+    "typescript": "^4.9.4"
+  }
+}

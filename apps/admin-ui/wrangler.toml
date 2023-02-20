@@ -1,0 +1,22 @@
+name = "remix-cloudflare-workers"
+
+workers_dev = true
+main = "./build/index.js"
+# https://developers.cloudflare.com/workers/platform/compatibility-dates
+compatibility_date = "2023-01-19"
+
+kv_namespaces = [ 
+    { binding = "FLARGD_STORE", id = "5e9ed856e27c483ca03c4d50ef74d70a", preview_id = "ea670fd2429642b6b6cb5cecea8a0346" } 
+]
+
+[vars]
+CORE_API = "http://127.0.0.1:64920"
+
+[env.production.vars]
+CORE_API = "example.com"
+
+[site]
+  bucket = "./public"
+
+[build]
+  command = "pnpm run build"

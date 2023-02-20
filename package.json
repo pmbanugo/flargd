@@ -1,21 +1,21 @@
 {
-  "name": "flargd",
-  "version": "0.0.0",
-  "devDependencies": {
-    "@cloudflare/workers-types": "^4.20221111.1",
-    "typescript": "^4.9.4",
-    "vitest": "^0.27.2",
-    "wrangler": "2.8.0"
-  },
+  "name": "flargd-monorepo",
   "private": true,
+  "description": "",
   "scripts": {
-    "start": "wrangler dev",
-    "start:local": "wrangler dev --persist --local",
-    "start:workerd": "wrangler dev --persist --experimental-local",
-    "deploy": "wrangler publish",
-    "test": "vitest"
+    "ci:version": "changeset version",
+    "ci:publish": "pnpm publish -r"
   },
-  "dependencies": {
-    "hono": "^2.7.3"
-  }
+  "engines": {
+    "node": ">=18.10"
+  },
+  "author": "Peter Mbanugo",
+  "license": "Apache",
+  "devDependencies": {
+    "@changesets/cli": "^2.26.0"
+  },
+  "workspaces": [
+    "packages/*",
+    "apps/**"
+  ]
 }
