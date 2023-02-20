@@ -1,9 +1,0 @@
-{
-  "name": "ahocorasick-visualization",
-  "version": "1.0.0",
-  "description": "",
-  "dependencies": {
-    "d3": "^5.7.0",
-    "dagre-d3": "^0.6.1"
-  }
-}
