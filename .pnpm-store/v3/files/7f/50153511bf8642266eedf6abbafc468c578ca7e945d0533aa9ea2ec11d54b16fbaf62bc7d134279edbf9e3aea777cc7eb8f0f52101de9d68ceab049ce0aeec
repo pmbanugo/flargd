@@ -1,0 +1,30 @@
+/**
+ * @remix-run/cloudflare v1.12.0
+ *
+ * Copyright (c) Remix Software Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE.md file in the root directory of this source tree.
+ *
+ * @license MIT
+ */
+'use strict';
+Object.defineProperty(exports, '__esModule', { value: true });
+var cloudflare = require('@remix-run/cloudflare');
+/** @deprecated Import `createCloudflareKVSessionStorage` from `@remix-run/cloudflare` instead. */
+exports.createCloudflareKVSessionStorage = cloudflare.createCloudflareKVSessionStorage;
+
+/** @deprecated Import `createCookie` from `@remix-run/cloudflare` instead. */
+exports.createCookie = cloudflare.createCookie;
+
+/** @deprecated Import `createCookieSessionStorage` from `@remix-run/cloudflare` instead. */
+exports.createCookieSessionStorage = cloudflare.createCookieSessionStorage;
+
+/** @deprecated Import `createMemorySessionStorage` from `@remix-run/cloudflare` instead. */
+exports.createMemorySessionStorage = cloudflare.createMemorySessionStorage;
+
+/** @deprecated Import `createSessionStorage` from `@remix-run/cloudflare` instead. */
+exports.createSessionStorage = cloudflare.createSessionStorage;
+
+/** @deprecated Import `createWorkersKVSessionStorage` from `@remix-run/cloudflare` instead. */
+exports.createWorkersKVSessionStorage = cloudflare.createWorkersKVSessionStorage;

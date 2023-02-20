@@ -1,0 +1,11 @@
+import { UNSAFE_DeferredData as DeferredData } from "@remix-run/router";
+import type { FormMethod as FormMethodRR } from "react-router-dom";
+export declare type AppData = any;
+export declare type FormMethod = FormMethodRR;
+export declare type FormEncType = "application/x-www-form-urlencoded" | "multipart/form-data";
+export declare function isCatchResponse(response: any): boolean;
+export declare function isErrorResponse(response: any): boolean;
+export declare function isRedirectResponse(response: any): boolean;
+export declare function isDeferredResponse(response: any): boolean;
+export declare function fetchData(request: Request, routeId: string): Promise<Response | Error>;
+export declare function parseDeferredReadableStream(stream: ReadableStream<Uint8Array>): Promise<DeferredData>;
