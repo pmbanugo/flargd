@@ -5,6 +5,7 @@ on:
       - main
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
+permissions: read-all|write-all
 
 env:
   CI: true
