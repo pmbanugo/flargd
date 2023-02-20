@@ -1,0 +1,11 @@
+export declare const runtimes: readonly ["cloudflare", "node"];
+export declare type Runtime = typeof runtimes[number];
+export declare const isRuntime: (maybe: string) => maybe is "node" | "cloudflare";
+declare const adapters: readonly ["architect", "cloudflare-pages", "cloudflare-workers", "express", "netlify", "vercel"];
+export declare type Adapter = typeof adapters[number];
+export declare const isAdapter: (maybe: string) => maybe is "netlify" | "vercel" | "cloudflare-pages" | "cloudflare-workers" | "express" | "architect";
+declare const renderers: readonly ["react"];
+export declare type Renderer = typeof renderers[number];
+export declare type RemixPackage = "remix" | `@remix-run/${Runtime | Adapter | Renderer}`;
+export declare const isRemixPackage: (pkgName: string) => pkgName is RemixPackage;
+export {};

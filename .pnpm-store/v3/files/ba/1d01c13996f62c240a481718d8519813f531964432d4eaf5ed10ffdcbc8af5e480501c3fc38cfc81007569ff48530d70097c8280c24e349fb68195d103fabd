@@ -1,0 +1,27 @@
+/// <reference types="@cloudflare/workers-types" />
+import type { Options as KvAssetHandlerOptions } from "@cloudflare/kv-asset-handler";
+import type { AppLoadContext, ServerBuild } from "@remix-run/cloudflare";
+/**
+ * A function that returns the value to use as `context` in route `loader` and
+ * `action` functions.
+ *
+ * You can think of this as an escape hatch that allows you to pass
+ * environment/platform-specific values through to your loader/action.
+ */
+export declare type GetLoadContextFunction = (event: FetchEvent) => AppLoadContext;
+export declare type RequestHandler = (event: FetchEvent) => Promise<Response>;
+/**
+ * Returns a request handler for the Cloudflare runtime that serves the
+ * Remix SSR response.
+ */
+export declare function createRequestHandler({ build, getLoadContext, mode, }: {
+    build: ServerBuild;
+    getLoadContext?: GetLoadContextFunction;
+    mode?: string;
+}): RequestHandler;
+export declare function handleAsset(event: FetchEvent, build: ServerBuild, options?: Partial<KvAssetHandlerOptions>): Promise<Response | null>;
+export declare function createEventHandler({ build, getLoadContext, mode, }: {
+    build: ServerBuild;
+    getLoadContext?: GetLoadContextFunction;
+    mode?: string;
+}): (event: FetchEvent) => void;
