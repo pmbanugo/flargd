@@ -6,7 +6,7 @@ Flargd is a feature flag application that you can use to implement feature toggl
 
 ## Features 💰
 
-- **Fast** ⚡️ Less than 80ms RTT
+- **Fast** ⚡️ Less than 80ms RTT (47ms on average)
 - **Minimal & Lightweight** 🧘🏽‍♀️ Minimalistic API that gets the job done
 - **Edge Runtime** ⚙️ Runs close to your users and application
 - **Self-hostable** 👩🏽‍💻
@@ -132,3 +132,7 @@ See the [contribution guide](/CONTRIBUTING.md)
 ## Roadmap 🚧
 
 Coming soon 🔜
+
+## Author
+
+This project is created by [Peter Mbanugo](https://github.com/pmbanugo)
