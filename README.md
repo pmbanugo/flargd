@@ -1,4 +1,4 @@
-# Flargd - A fast &amp; minimalist feature flag app that runs on the edge 🏎
+# Flargd - A fast, edge-based feature flag solution for modern applications 🏎
 
 Flargd is a feature flag application that you can use to implement feature toggling in your application. You can self-host it on Cloudflare Workers, and use it in your edge or serverless application (but not limited to these environments/runtimes).
 
