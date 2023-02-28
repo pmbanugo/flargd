@@ -1,4 +1,4 @@
-# Flargd - A fast &amp; minimalist feature flag app that runs on the edge 🏎
+# Flargd - A fast, edge-based feature flag solution for modern applications 🏎
 
 Flargd is a feature flag application that you can use to implement feature toggling in your application. You can self-host it on Cloudflare Workers, and use it in your edge or serverless application (but not limited to these environments/runtimes).
 
@@ -51,7 +51,7 @@ Enter the name `New_About_Page` for the flag and set the percentage to `70`. Cli
 
 ### Using The Flags
 
-Let's make use of a basic A/B test Next.js application. You can clone the app from the [official examples repo](https://github.com/pmbanugo/flargd-examples/tree/main/edge-functions/vercel-edge-middleware-nextjs). After cloning, copy the `.env.example` file in this directory to `.env.local`:
+Let's make use of a basic A/B test Next.js application. You can clone the app from the [official examples repo](https://github.com/pmbanugo/flargd-examples/tree/main/edge-middleware/vercel-basic-ab-test-nextjs). After cloning, copy the `.env.example` file in this directory to `.env.local`:
 
 ```bash
 cp .env.example .env.local
@@ -90,7 +90,9 @@ The `getFeatureFlagVariant()` function is used in **middleware.ts** at the root 
 
 Start the Next.js application using the command `npm run dev`. Open it in your browser and follow the UI prompt. You can click the **reset** button to reset the feature flag values.
 
-There you have your first application using Flargd 👏🏽 For more examples, check out [github.com/pmbanugo/flargd-examples](https://github.com/pmbanugo/flargd-examples).
+There you have your first application using Flargd 👏🏽
+
+For more examples, check out [github.com/pmbanugo/flargd-examples](https://github.com/pmbanugo/flargd-examples).
 
 For more description about the @flargd/web SDK, check its [documentation](/packages/web/README.md)
 
