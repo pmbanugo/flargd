@@ -4,9 +4,11 @@ Flargd is a feature flag application that you can use to implement feature toggl
 
 > ⚠️ Flargd is currently in beta. Expect breaking changes prior to v1.0. You can follow my weekly update [publicly, on Twitter](https://twitter.com/p_mbanugo/status/1616467436919742465).
 
+![Speed test](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/pxvkbt5d7h7rdyjc17rp.png)
+
 ## Features 💰
 
-- **Fast** ⚡️ Less than 60ms RTT on average - See the [status page](https://flargd-var-edge.planetfall.io/) for real-time latency test
+- **Fast** ⚡️ Less than 50ms RTT on average - See the [status page](https://flargd-var-edge.planetfall.io/) for real-time latency test
 - **Minimal & Lightweight** 🧘🏽‍♀️ Minimalistic API that gets the job done
 - **Edge Runtime** ⚙️ Runs close to your users and application
 - **Self-hostable** 👩🏽‍💻
