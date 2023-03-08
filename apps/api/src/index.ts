@@ -1,108 +1,66 @@
 import { Router } from "itty-router";
 import { calculatePercentage, evaluate } from "./evaluation";
-import { createFlagKey } from "./flag";
 import type { Flag, FlagPercentage } from "./flag";
 import { getCfProperties } from "./util/request";
 import type { Env } from "./util/request";
 import { json, notFound, text } from "./util/response";
-
-interface FlagPayload {
-  flagName: string;
-  description?: string;
-  percentage: FlagPercentage;
-}
-
-type Metadata = Omit<Flag, "percentage" | "owner" | "app"> & {
-  percentage: number;
-};
-
-const OWNER = "public"; // TODO: This should be dynamic
+import {
+  deleteFlag,
+  getFlag,
+  getFlags,
+  getSelectedFlags,
+  saveFlag,
+} from "./repository/flag";
 
 const router = Router();
 
 router.get("/", () => new Response("Hello! Flargd Edge Feature Flags!"));
 
 /** Create and update a flag */
-router.post("/apps/:app/flags", async (req, env: Env) => {
+router.post("/teams/:team/apps/:app/flags/:flag", async (req, env: Env) => {
   try {
     // TODO: validate input
-    const { flagName, description, percentage } =
-      (await req.json()) as FlagPayload;
-    const { app } = req.params;
+    const { description, percentage } = (await req.json()) as {
+      description?: string;
+      percentage: FlagPercentage;
+    };
+    const { app, team, flag: name } = req.params;
 
-    const flagKey = createFlagKey({ prefix: OWNER, flagName, app });
-    const date = new Date().toISOString();
-    const { value: existingFlag, metadata: existingMeta } =
-      await env.FLARGD_STORE.getWithMetadata<Flag, Metadata>(flagKey, "json");
+    await saveFlag(env.FLARGD_STORE, {
+      team,
+      app,
+      name,
+      description,
+      percentage,
+    });
 
-    let flag: Flag;
-    let metadata: Metadata;
-
-    if (existingFlag && existingMeta) {
-      metadata = {
-        ...existingMeta,
-        percentage: percentage.amount,
-        description,
-        updatedAt: date,
-      };
-      flag = {
-        ...existingFlag,
-        percentage,
-        description,
-        updatedAt: date,
-      };
-    } else {
-      metadata = {
-        name: flagName,
-        description,
-        percentage: percentage.amount,
-        createdAt: date,
-        updatedAt: date,
-      };
-
-      flag = { ...metadata, percentage, app, owner: OWNER };
-    }
-
-    await env.FLARGD_STORE.put(flagKey, JSON.stringify(flag), { metadata });
-    return json(flag, 201);
+    return json({ name, description, percentage }, 201);
   } catch (error) {
     console.error({ error });
     return text("Kaboom!", 500); // Refactor later for better error handler/description
   }
 });
 
-router.get("/apps/:app/flags", async (req, env: Env) => {
-  const { app } = req.params;
-  const prefix = `${OWNER}:${app}:`;
-
+router.get("/teams/:team/apps/:app/flags", async (req, env: Env) => {
+  const { app, team } = req.params;
   try {
-    const { keys } = await env.FLARGD_STORE.list<Metadata>({ prefix });
-
-    return json(
-      keys.map(
-        ({ metadata }) =>
-          metadata && {
-            name: metadata.name,
-            description: metadata.description,
-            createdAt: metadata.createdAt,
-            percentage: metadata.percentage,
-          }
-      )
+    const appFlags: Awaited<ReturnType<typeof getFlags>> = await getFlags(
+      env.FLARGD_STORE,
+      { team, app }
     );
+
+    return json(appFlags?.flags ?? []);
   } catch (error) {
     console.error({ error });
-
     return text("Kaboom!", 500);
   }
 });
 
-router.get("/apps/:app/flags/:flagName", async (req, env: Env) => {
-  const { app, flagName } = req.params;
-  const flagKey = createFlagKey({ prefix: OWNER, flagName, app });
+router.get("/teams/:team/apps/:app/flags/:flag", async (req, env: Env) => {
+  const { app, flag: name, team } = req.params;
 
   try {
-    const flag = await env.FLARGD_STORE.get<Flag>(flagKey, "json");
-
+    const flag = await getFlag(env.FLARGD_STORE, { team, app, name });
     if (flag) {
       return json(flag);
     }
@@ -110,81 +68,73 @@ router.get("/apps/:app/flags/:flagName", async (req, env: Env) => {
     return notFound();
   } catch (error) {
     console.error({ error });
-
     return text("Kaboom!", 500);
   }
 });
 
-router.delete("/apps/:app/flags/:flagName", async (req, env: Env) => {
-  const { app, flagName } = req.params;
-  const flagKey = createFlagKey({ prefix: OWNER, flagName, app });
+router.delete("/teams/:team/apps/:app/flags/:flag", async (req, env: Env) => {
+  const { app, flag: name, team } = req.params;
 
   try {
-    await env.FLARGD_STORE.delete(flagKey);
+    await deleteFlag(env.FLARGD_STORE, { team, app, name });
     return new Response(undefined, { status: 204 });
   } catch (error) {
     console.error({ error });
-
-    return text("Kaboom!", 500);
-  }
-});
-
-router.get("/apps/:app/evaluations/:identifier?", async (req, env: Env) => {
-  const { app, identifier: requestIdentifier } = req.params;
-  const { flags: flagNames } = req.query;
-  if (!flagNames || !Array.isArray(flagNames)) {
-    return text("Expected flags search query to be at least 2", 400);
-  }
-  //TODO: Add check to remove duplicate flag names.
-
-  try {
-    const cacheTtl = 300; // TODO: make this configurable at runtime
-    const options: KVNamespaceGetOptions<"json"> = { cacheTtl, type: "json" };
-    const cfProperties = getCfProperties(req);
-
-    const evaluatedFlags = flagNames.map(async (flagName) => {
-      const flagKey = createFlagKey({ prefix: OWNER, flagName, app });
-      const [flag, userPercentage] = await Promise.all([
-        env.FLARGD_STORE.get<Flag>(flagKey, options),
-        calculatePercentage(requestIdentifier),
-      ]);
-
-      if (flag) {
-        return [
-          flagName,
-          evaluate(flag.percentage, userPercentage, cfProperties),
-        ] as const;
-      }
-    });
-
-    const result: Record<string, ReturnType<typeof evaluate>> = {};
-    for await (const flag of evaluatedFlags) {
-      if (flag) {
-        result[flag[0]] = flag[1];
-      }
-    }
-
-    return json(result);
-  } catch (error) {
-    console.error({ error });
-
     return text("Kaboom!", 500);
   }
 });
 
 router.get(
-  "/apps/:app/evaluation/:flagName/:identifier?",
+  "/teams/:team/apps/:app/evaluations/:identifier?",
   async (req, env: Env) => {
-    const { app, flagName, identifier: requestIdentifier } = req.params;
-    const flagKey = createFlagKey({ prefix: OWNER, flagName, app });
+    const { app, identifier, team } = req.params;
+    const { flags: flagNames } = req.query;
+    if (!flagNames || !Array.isArray(flagNames)) {
+      return text("Expected flags search query to be at least 2", 400);
+    }
+    //TODO: Add check to remove duplicate flag names.
 
     try {
-      const cacheTtl = 300; // TODO: make this configurable at runtime
-      const options: KVNamespaceGetOptions<"json"> = { cacheTtl, type: "json" };
-      const flag = await env.FLARGD_STORE.get<Flag>(flagKey, options);
+      const appFlags = await getSelectedFlags(env.FLARGD_STORE, {
+        team,
+        app,
+        flags: flagNames,
+      });
+
+      if (appFlags) {
+        const cfProperties = getCfProperties(req);
+        const userPercentage = await calculatePercentage(identifier);
+        const result = appFlags.flags.reduce((flags, currentFlag) => {
+          flags[currentFlag.name] = evaluate(
+            currentFlag.percentage,
+            userPercentage,
+            cfProperties
+          );
+
+          return flags;
+        }, {} as Record<string, ReturnType<typeof evaluate>>);
+
+        return json(result);
+      }
+
+      return notFound();
+    } catch (error) {
+      console.error({ error });
+      return text("Kaboom!", 500);
+    }
+  }
+);
+
+router.get(
+  "/teams/:team/apps/:app/evaluation/:flag/:identifier?",
+  async (req, env: Env) => {
+    const { app, flag: name, identifier, team } = req.params;
+
+    try {
+      const flag = await getFlag(env.FLARGD_STORE, { team, app, name });
 
       if (flag) {
-        const userPercentage = await calculatePercentage(requestIdentifier);
+        const userPercentage = await calculatePercentage(identifier);
         const evaluation = evaluate(
           flag.percentage,
           userPercentage,
@@ -197,7 +147,6 @@ router.get(
       return notFound();
     } catch (error) {
       console.error({ error });
-
       return text("Kaboom!", 500);
     }
   }
