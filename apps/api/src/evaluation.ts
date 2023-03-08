@@ -35,7 +35,7 @@ export function evaluate(
   context: Record<string, string>
 ): { enable: boolean } {
   if (amount === 0) return { enable: false };
-  if (amount === 100 && conditions?.length === 0) return { enable: true };
+  if (amount === 100 && conditions.length === 0) return { enable: true };
 
   const pass = conditions.reduce(
     (prev, { condition, target, attribute }) =>
