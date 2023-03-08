@@ -199,21 +199,21 @@ describe("evaluating flags with multiple conditions", () => {
     ],
   };
 
-  it("should evaluate to false if one of the conditions fails", async () => {
+  it("should evaluate to true if at least one of the conditions passes", async () => {
     expect(
       evaluate(flag, 80, { city: "Paris", email: "peter@pmbanugo.me" })
     ).toStrictEqual({
-      enable: false,
+      enable: true,
     });
 
     expect(
       evaluate(flag, 80, { city: "Lagos", email: "peter@gmail.com" })
     ).toStrictEqual({
-      enable: false,
+      enable: true,
     });
 
     expect(evaluate(flag, 80, { city: "Lagos" })).toStrictEqual({
-      enable: false,
+      enable: true,
     });
   });
 
@@ -222,6 +222,18 @@ describe("evaluating flags with multiple conditions", () => {
       evaluate(flag, 80, { city: "Lagos", email: "peter@pmbanugo.me" })
     ).toStrictEqual({
       enable: true,
+    });
+  });
+
+  it("should evaluate to false if all the conditions fails", async () => {
+    expect(
+      evaluate(flag, 80, { city: "Paris", email: "peter@gmail.com" })
+    ).toStrictEqual({
+      enable: false,
+    });
+
+    expect(evaluate(flag, 80, { city: "Paris" })).toStrictEqual({
+      enable: false,
     });
   });
 });
