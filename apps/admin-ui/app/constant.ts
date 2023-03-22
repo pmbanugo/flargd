@@ -23,3 +23,5 @@ export type Condition = {
   condition: ConditionKeys;
   target: string | string[];
 };
+
+export const TEAM = "public"; //TODO: should come from a config or user scoped data after authentication

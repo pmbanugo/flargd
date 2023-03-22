@@ -1,6 +1,6 @@
 import { Router } from "itty-router";
 import { calculatePercentage, evaluate } from "./evaluation";
-import type { Flag, FlagPercentage } from "./flag";
+import type { FlagPercentage } from "./flag";
 import { getCfProperties } from "./util/request";
 import type { Env } from "./util/request";
 import { json, notFound, text } from "./util/response";
@@ -11,6 +11,7 @@ import {
   getSelectedFlags,
   saveFlag,
 } from "./repository/flag";
+import { getApps, saveApp } from "./repository/app";
 
 const router = Router();
 
@@ -151,6 +152,46 @@ router.get(
     }
   }
 );
+
+router.get("/teams/:team/apps", async (req, { FLARGD_STORE }: Env) => {
+  const { team } = req.params;
+  try {
+    const teamApps: Awaited<ReturnType<typeof getApps>> = await getApps(
+      FLARGD_STORE,
+      team
+    );
+    if (teamApps) {
+      return json(teamApps.apps);
+    }
+    return notFound();
+  } catch (error) {
+    console.error({ error });
+    return text("Kaboom!", 500);
+  }
+});
+
+router.post("/teams/:team/apps/:app", async (req, { FLARGD_STORE }: Env) => {
+  try {
+    // TODO: validate input e.g if isDefault is set, it must be true
+    const { description, isDefault } = (await req.json()) as {
+      description?: string;
+      isDefault?: true;
+    };
+    const { app, team } = req.params;
+
+    await saveApp(FLARGD_STORE, {
+      team,
+      name: app,
+      description,
+      isDefault,
+    });
+
+    return json({ name: app, description, isDefault }, 201);
+  } catch (error) {
+    console.error({ error });
+    return text("Kaboom!", 500); // Refactor later for better error handler/description
+  }
+});
 
 export default {
   fetch: router.handle,
