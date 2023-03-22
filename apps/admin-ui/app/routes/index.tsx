@@ -3,7 +3,7 @@ import { json, redirect } from "@remix-run/cloudflare";
 import { Form, Link, useLoaderData } from "@remix-run/react";
 import { PlusIcon, TrashIcon } from "~/components/icons";
 import Main from "~/components/layout/main";
-import Heading from "../components/layout/heading";
+import Heading from "~/components/layout/heading";
 
 interface Flag {
   name: string;
