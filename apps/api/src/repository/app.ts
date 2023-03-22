@@ -1,6 +1,6 @@
 interface App {
   name: string;
-  description: string;
+  description?: string;
   isDefault?: true;
 }
 
