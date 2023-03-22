@@ -20,7 +20,7 @@ export async function saveApp(
   const key = createKey(team);
   const teamApp = await KV.get<TeamApp>(key, "json");
   if (teamApp) {
-    const apps = isDefault
+    const filteredApps = isDefault
       ? teamApp.apps
           .filter((app) => app.name !== name)
           .map((app) => {
@@ -30,7 +30,11 @@ export async function saveApp(
             return app;
           })
       : teamApp.apps.filter((app) => app.name !== name);
-    apps.push({ name, description, isDefault });
+
+    const apps: App[] =
+      filteredApps.length > 0
+        ? [...filteredApps, { name, description, isDefault }]
+        : [{ name, description, isDefault: true }];
 
     const data: TeamApp = {
       team,
