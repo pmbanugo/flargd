@@ -9,7 +9,8 @@ import {
 import Main from "~/components/layout/main";
 import Heading from "~/components/layout/heading";
 import { TEAM } from "~/constant";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import * as RadixToast from "@radix-ui/react-toast";
 
 interface App {
   name: string;
@@ -54,6 +55,7 @@ export default function Index() {
   const apps = useLoaderData<typeof loader>();
   const navigation = useNavigation();
   const actionData = useActionData<typeof action>();
+  const [showMessage, setShowMessage] = useState(false);
 
   const isReloading =
     navigation.state === "loading" &&
@@ -63,6 +65,9 @@ export default function Index() {
   useEffect(() => {
     if (isReloading && actionData === ACTION_RESULT.OK) {
       formRef.current?.reset();
+    }
+    if (isReloading && actionData) {
+      setShowMessage(true);
     }
   }, [isReloading, actionData]);
 
@@ -161,6 +166,36 @@ export default function Index() {
           </div>
         </div>
       </Main>
+
+      {showMessage && (
+        <Toast
+          succeeded={actionData === ACTION_RESULT.OK}
+          onOpenChange={setShowMessage}
+        />
+      )}
     </>
   );
 }
+
+const Toast = ({
+  succeeded,
+  onOpenChange,
+}: {
+  succeeded: boolean;
+  onOpenChange: (open: boolean) => void;
+}) => (
+  <RadixToast.Provider swipeDirection="right" duration={1500}>
+    <RadixToast.Root
+      onOpenChange={onOpenChange}
+      className={
+        (succeeded ? "bg-green-200" : "bg-red-200") +
+        " rounded-md shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] p-[15px] grid [grid-template-areas:_'title_action'_'description_action'] grid-cols-[auto_max-content] gap-x-[15px] items-center data-[state=open]:animate-slideIn data-[state=closed]:animate-hide data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=cancel]:translate-x-0 data-[swipe=cancel]:transition-[transform_200ms_ease-out] data-[swipe=end]:animate-swipeOut"
+      }
+    >
+      <RadixToast.Title className="[grid-area:_title] text-[15px]">
+        {succeeded ? "Saved Successfully" : "Error Saving ☹️"}
+      </RadixToast.Title>
+    </RadixToast.Root>
+    <RadixToast.Viewport className="[--viewport-padding:_25px] fixed bottom-0 right-0 flex flex-col p-[var(--viewport-padding)] gap-[10px]  max-w-[100vw] m-0 list-none z-[2147483647] outline-none" />
+  </RadixToast.Provider>
+);
