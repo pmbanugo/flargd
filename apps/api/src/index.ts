@@ -161,7 +161,7 @@ router.get("/teams/:team/apps", async (req, { FLARGD_STORE }: Env) => {
       team
     );
     if (teamApps) {
-      return json(teamApps.apps);
+      return json({ apps: teamApps.apps, defaultApp: teamApps.defaultApp });
     }
     return notFound();
   } catch (error) {
@@ -175,7 +175,7 @@ router.post("/teams/:team/apps/:app", async (req, { FLARGD_STORE }: Env) => {
     // TODO: validate input e.g if isDefault is set, it must be true
     const { description, isDefault } = (await req.json()) as {
       description?: string;
-      isDefault?: true;
+      isDefault?: boolean;
     };
     const { app, team } = req.params;
 
@@ -183,7 +183,7 @@ router.post("/teams/:team/apps/:app", async (req, { FLARGD_STORE }: Env) => {
       team,
       name: app,
       description,
-      isDefault,
+      isDefault: !!isDefault,
     });
 
     return json({ name: app, description, isDefault }, 201);

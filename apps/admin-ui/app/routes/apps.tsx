@@ -12,10 +12,9 @@ import { TEAM } from "~/constant";
 import { useEffect, useRef, useState } from "react";
 import * as RadixToast from "@radix-ui/react-toast";
 
-interface App {
-  name: string;
-  description?: string;
-  isDefault?: true;
+interface TeamApp {
+  apps: { name: string; description?: string }[];
+  defaultApp: string;
 }
 
 const ACTION_RESULT = { OK: "OK", Failed: "FAILED" } as const;
@@ -24,10 +23,10 @@ export const loader = async () => {
   const response = await fetch(`${CORE_API}/teams/${TEAM}/apps`);
 
   if (response.ok) {
-    return json<App[]>(await response.json());
+    return json<TeamApp>(await response.json());
   }
   //TODO: maybe return an error?
-  return json<App[]>([]);
+  return json<TeamApp>({ apps: [], defaultApp: "" });
 };
 
 export const action = async ({ request }: ActionArgs) => {
@@ -52,7 +51,7 @@ export const action = async ({ request }: ActionArgs) => {
 
 export default function Index() {
   const formRef = useRef<HTMLFormElement>(null);
-  const apps = useLoaderData<typeof loader>();
+  const { apps, defaultApp } = useLoaderData<typeof loader>();
   const navigation = useNavigation();
   const actionData = useActionData<typeof action>();
   const [showMessage, setShowMessage] = useState(false);
@@ -155,7 +154,7 @@ export default function Index() {
                         {app.name}
                       </th>
                       <td className="px-6 py-4">
-                        {app.isDefault ? "YES" : ""}
+                        {app.name === defaultApp ? "YES" : ""}
                       </td>
                       <td className="px-6 py-4">{app.description}</td>
                     </tr>
