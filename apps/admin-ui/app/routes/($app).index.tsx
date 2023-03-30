@@ -1,6 +1,6 @@
 import type { ActionArgs, LoaderArgs } from "@remix-run/cloudflare";
 import { json, redirect } from "@remix-run/cloudflare";
-import { Form, Link, useLoaderData } from "@remix-run/react";
+import { Form, Link, useLoaderData, useNavigate } from "@remix-run/react";
 import { PlusIcon, TrashIcon } from "~/components/icons";
 import Main from "~/components/layout/main";
 import Heading from "~/components/layout/heading";
@@ -50,6 +50,7 @@ export const action = async ({ request }: ActionArgs) => {
 
 export default function Index() {
   const { apps, flags, selectedApp } = useLoaderData<typeof loader>();
+  const navigate = useNavigate();
 
   return (
     <>
@@ -69,7 +70,10 @@ export default function Index() {
             <div className="grow max-w-sm">
               <label className="">
                 <span className="text-gray-700">You're viewing flags for:</span>
-                <select className="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                <select
+                  className="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                  onChange={(e) => navigate(`/${e.target.value}`)}
+                >
                   <option value={""}>Select App</option>
                   {apps.map(({ name }) => (
                     <option key={name} selected={selectedApp === name}>
