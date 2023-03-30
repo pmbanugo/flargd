@@ -5,10 +5,6 @@ export interface Flag {
   name: string;
   description?: string;
   percentage: FlagPercentage;
-  app: string;
-  owner: string;
-  createdAt: string;
-  updatedAt: string;
 }
 
 export interface FlagPercentage {

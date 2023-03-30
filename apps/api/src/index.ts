@@ -50,7 +50,7 @@ router.get("/teams/:team/apps/:app/flags", async (req, env: Env) => {
       { team, app }
     );
 
-    return json(appFlags?.flags ?? []);
+    return json(appFlags?.flags ?? []); //TODO: consider returning 404 if appFlags is null
   } catch (error) {
     console.error({ error });
     return text("Kaboom!", 500);

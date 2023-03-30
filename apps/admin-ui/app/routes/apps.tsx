@@ -11,11 +11,7 @@ import Heading from "~/components/layout/heading";
 import { TEAM } from "~/constant";
 import { useEffect, useRef, useState } from "react";
 import * as RadixToast from "@radix-ui/react-toast";
-
-interface TeamApp {
-  apps: { name: string; description?: string }[];
-  defaultApp: string;
-}
+import type { TeamApp } from "~/types/app";
 
 const ACTION_RESULT = { OK: "OK", Failed: "FAILED" } as const;
 
