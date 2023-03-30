@@ -29,15 +29,17 @@ export const loader = async ({ params }: LoaderArgs) => {
 };
 
 export const action = async ({ request }: ActionArgs) => {
-  const appName = "default";
   const formData = await request.formData();
   //TODO: Validate Data
+  const flag = formData.get("flag");
+  const app = formData.get("app");
 
-  const flagName = formData.get("flagName");
-
-  const res = await fetch(`${CORE_API}/apps/${appName}/flags/${flagName}`, {
-    method: "DELETE",
-  });
+  const res = await fetch(
+    `${CORE_API}/teams/${TEAM}/apps/${app}/flags/${flag}`,
+    {
+      method: "DELETE",
+    }
+  );
 
   if (!res.ok) {
     return json(res.status);
@@ -121,11 +123,8 @@ export default function Index() {
                           Edit
                         </a>
                         <Form method="post" className="inline-block">
-                          <input
-                            type="hidden"
-                            name="flagName"
-                            value={flag.name}
-                          />
+                          <input type="hidden" name="flag" value={flag.name} />
+                          <input type="hidden" name="app" value={selectedApp} />
                           <button type="submit" className="">
                             <TrashIcon className="h-4 text-gray-500 dark:text-white cursor-pointer inline-block ml-6" />
                           </button>
