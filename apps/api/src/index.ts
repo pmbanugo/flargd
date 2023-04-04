@@ -11,7 +11,7 @@ import {
   getSelectedFlags,
   saveFlag,
 } from "./repository/flag";
-import { getApps, saveApp } from "./repository/app";
+import { appExist, getApps, saveApp } from "./repository/app";
 
 const router = Router();
 
@@ -19,13 +19,17 @@ router.get("/", () => new Response("Hello! Flargd Edge Feature Flags!"));
 
 /** Create and update a flag */
 router.post("/teams/:team/apps/:app/flags/:flag", async (req, env: Env) => {
+  const { app, team, flag: name } = req.params;
   try {
+    if (!(await appExist(env.FLARGD_STORE, { team, app }))) {
+      return text("The team or app does not exist", 400);
+    }
+
     // TODO: validate input
     const { description, percentage } = (await req.json()) as {
       description?: string;
       percentage: FlagPercentage;
     };
-    const { app, team, flag: name } = req.params;
 
     await saveFlag(env.FLARGD_STORE, {
       team,

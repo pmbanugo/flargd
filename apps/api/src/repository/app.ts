@@ -56,3 +56,11 @@ export function deleteApp(KV: KVNamespace, team: string) {
 export function getApps(KV: KVNamespace, team: string) {
   return KV.get<TeamApp>(createKey(team), "json");
 }
+
+export async function appExist(
+  KV: KVNamespace,
+  { team, app }: { team: string; app: string }
+) {
+  const teamApp = await KV.get(createKey(team));
+  return !!teamApp?.includes(`"name":"${app}"`);
+}
