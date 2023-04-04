@@ -60,7 +60,7 @@ export default function Index() {
           <div className="flex justify-between mb-2">
             <div>
               <Link
-                to={"/create"}
+                to={`/apps/${selectedApp}/flag/create`}
                 className="inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 cursor-pointer"
               >
                 <PlusIcon />
@@ -147,7 +147,9 @@ export default function Index() {
 }
 
 async function fetchFlags(app: string) {
-  const flagsResponse = await fetch(`${CORE_API}/apps/${app}/flags`);
+  const flagsResponse = await fetch(
+    `${CORE_API}/teams/${TEAM}/apps/${app}/flags`
+  );
   if (flagsResponse.ok) return await flagsResponse.json<Flag[]>();
   return [];
 }
