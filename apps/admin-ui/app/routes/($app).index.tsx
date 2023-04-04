@@ -45,7 +45,7 @@ export const action = async ({ request }: ActionArgs) => {
     return json(res.status);
   }
 
-  return redirect("/");
+  return redirect(`/${app}`);
 };
 
 export default function Index() {
