@@ -55,17 +55,12 @@ export async function saveFlag(
   const appFlags = await KV.get<AppFlags>(key, "json");
 
   if (appFlags) {
-    const flags = appFlags.flags.filter((flag) => flag.name !== name);
-    flags.push({ name, description, percentage });
+    const index = appFlags.flags.findIndex((flag) => flag.name === name);
+    if (index > -1) appFlags.flags[index] = { name, description, percentage };
+    else appFlags.flags.push({ name, description, percentage });
 
-    const data: AppFlags = {
-      team,
-      app,
-      flags,
-      createdAt: appFlags.createdAt,
-      updatedAt: new Date().toISOString(),
-    };
-    return KV.put(key, JSON.stringify(data));
+    appFlags.updatedAt = new Date().toISOString();
+    return KV.put(key, JSON.stringify(appFlags));
   } else {
     const date = new Date().toISOString();
     const appFlags: AppFlags = {
