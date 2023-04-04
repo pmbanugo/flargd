@@ -49,6 +49,7 @@ export async function saveApp(
   }
 }
 
+//Side note: delete the related flags after this operation executes.
 export function deleteApp(KV: KVNamespace, team: string) {
   return KV.delete(createKey(team));
 }
