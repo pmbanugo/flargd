@@ -121,7 +121,7 @@ export default function Index() {
                       <td className="px-6 py-4">{flag.percentage.amount}%</td>
                       <td className="px-6 py-4">
                         <a
-                          href={`/flags/${flag.name}`}
+                          href={`/apps/${selectedApp}/flags/${flag.name}`}
                           className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
                         >
                           Edit
