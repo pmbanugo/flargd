@@ -45,11 +45,12 @@ The configuration context has the following shape in TypeScript:
 interface Context {
   host?: string;
   app?: string;
+  team?: string;
   distinctId?: string;
 }
 ```
 
-If `app` and `host` are skipped, a default value will be used. For `app`, it defaults to **default**, and for `host` it's **https://api.flargd.dev**.
+If `app`, `host`, or `team` are skipped, a default value will be used. For `app`, it defaults to **default**, for `host` it's **https://api.flargd.dev**, while `team` defaults to `public`.
 
 The `distinctId` is optional and has no default. It is used by flargd as part of the evaluation criteria for a flag. If it is present, you are guaranteed to make get the same result each time you call `get()` or `getMany()`. If absent, the server generates a random identifier for each call to the `get()` or `getMany()` function. If you want a consistent result, it's advised to initialise with a value for `distinctId`.
 
