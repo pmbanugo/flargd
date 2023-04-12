@@ -89,51 +89,56 @@ router.delete("/teams/:team/apps/:app/flags/:flag", async (req, env: Env) => {
   }
 });
 
-router.get(
-  "/teams/:team/apps/:app/evaluations/:identifier?",
-  async (req, env: Env) => {
-    const { app, identifier, team } = req.params;
-    const { flags: flagNames } = req.query;
-    if (!flagNames || !Array.isArray(flagNames)) {
-      return text("Expected flags search query to be at least 2", 400);
-    }
-    //TODO: Add check to remove duplicate flag names.
+router.get("/teams/:team/apps/:app/evaluation/flags", async (req, env: Env) => {
+  const { app, team } = req.params;
+  const { flags, identifier } = req.query;
 
-    try {
-      const appFlags = await getSelectedFlags(env.FLARGD_STORE, {
-        team,
-        app,
-        flags: flagNames,
-      });
-
-      if (appFlags) {
-        const cfProperties = getCfProperties(req);
-        const userPercentage = await calculatePercentage(identifier);
-        const result = appFlags.flags.reduce((flags, currentFlag) => {
-          flags[currentFlag.name] = evaluate(
-            currentFlag.percentage,
-            userPercentage,
-            cfProperties
-          );
-
-          return flags;
-        }, {} as Record<string, ReturnType<typeof evaluate>>);
-
-        return json(result);
-      }
-
-      return notFound();
-    } catch (error) {
-      console.error({ error });
-      return text("Kaboom!", 500);
-    }
+  if (Array.isArray(identifier)) {
+    return text("Only one Identifier is expected", 400);
   }
-);
+  //TODO: Add check to remove duplicate flag names.
+
+  try {
+    const appFlags = Array.isArray(flags)
+      ? await getSelectedFlags(env.FLARGD_STORE, {
+          team,
+          app,
+          flags,
+        })
+      : await getFlags(env.FLARGD_STORE, { team, app });
+
+    if (appFlags) {
+      const cfProperties = getCfProperties(req);
+      const userPercentage = await calculatePercentage(identifier);
+      const result = appFlags.flags.reduce((flags, currentFlag) => {
+        flags[currentFlag.name] = evaluate(
+          currentFlag.percentage,
+          userPercentage,
+          cfProperties
+        );
+
+        return flags;
+      }, {} as Record<string, ReturnType<typeof evaluate>>);
+
+      return json(result);
+    }
+
+    return notFound();
+  } catch (error) {
+    console.error({ error });
+    return text("Kaboom!", 500);
+  }
+});
 
 router.get(
-  "/teams/:team/apps/:app/evaluation/:flag/:identifier?",
+  "/teams/:team/apps/:app/evaluation/flags/:flag",
   async (req, env: Env) => {
-    const { app, flag: name, identifier, team } = req.params;
+    const { app, flag: name, team } = req.params;
+    const { identifier } = req.query;
+
+    if (Array.isArray(identifier)) {
+      return text("Only one Identifier is expected", 400);
+    }
 
     try {
       const flag = await getFlag(env.FLARGD_STORE, { team, app, name });

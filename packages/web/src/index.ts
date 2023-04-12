@@ -21,7 +21,8 @@ export function createClient(
     app = context.app ?? DEFAULT_APP,
     team = context.team ?? DEFAULT_TEAM,
     distinctId = context.distinctId,
-    userContext = context.userContext;
+    userContext = context.userContext,
+    baseURL = `${host}/teams/${team}/apps/${app}`;
 
   return {
     /**
@@ -29,13 +30,12 @@ export function createClient(
      *
      * @param flag - The feature flag to retrieve
      * @returns The feature flag
-     *
      */
     async get(flag: string) {
       try {
-        let url = `${host}/teams/${team}/apps/${app}/evaluation/${flag}`;
+        let url = `${baseURL}/evaluation/flags/${flag}`;
         if (distinctId) {
-          url = `${url}/${distinctId}`;
+          url = `${url}?identifier=${distinctId}`;
         }
 
         const res = await fetch(url);
@@ -55,11 +55,9 @@ export function createClient(
     /**
      * Returns the evaluation result of the flags.
      *
-     *
      * @param flags - The feature flags to retrieve. There should be at least 2 items in the array
      * @returns The feature flags
      * @throws Throws error if there are less than two items (flag names) in the array
-     *
      */
     async getMany(
       flags: string[]
@@ -71,10 +69,8 @@ export function createClient(
       }
 
       try {
-        const base = `${host}/teams/${team}/apps/${app}/evaluations${
-          distinctId ? "/" + distinctId : ""
-        }`;
-        const url = new URL(base);
+        const identifier = distinctId ? `?identifier=${distinctId}` : "";
+        const url = new URL(`${baseURL}/evaluation/flags${identifier}`);
         flags.forEach((name) => url.searchParams.append("flags", name));
 
         const res = await fetch(url);
@@ -90,6 +86,25 @@ export function createClient(
         console.error(
           `Flargd ⚠️: Error fetching the feature flags [${flags}] failed`
         );
+        console.info({ error });
+        return { error: true };
+      }
+    },
+    async getAll() {
+      try {
+        const identifier = distinctId ? `?identifier=${distinctId}` : "";
+        const url = new URL(`${baseURL}/evaluation/flags${identifier}`);
+        const res = await fetch(url);
+
+        if (!res.ok) {
+          throw new Error(
+            "Flargd: Error Fetching Data. Response status: " + res.status
+          );
+        }
+
+        return res.json() as Promise<Record<string, { enable: boolean }>>;
+      } catch (error) {
+        console.error(`Flargd ⚠️: Error fetching the feature flags`);
         console.info({ error });
         return { error: true };
       }
