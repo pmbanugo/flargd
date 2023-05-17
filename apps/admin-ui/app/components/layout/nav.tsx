@@ -20,6 +20,13 @@ export default function Nav() {
                   >
                     Home
                   </Link>
+                  <Link
+                    to="/apps"
+                    className="text-white px-3 py-2 rounded-md text-sm font-medium"
+                    aria-current="page"
+                  >
+                    Apps
+                  </Link>
 
                   {/* <a
                     href="/"

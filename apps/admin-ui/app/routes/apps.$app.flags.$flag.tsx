@@ -1,6 +1,7 @@
 import Main from "~/components/layout/main";
 import Heading from "~/components/layout/heading";
 import type { Condition, ConditionKeys, ContionalAttribute } from "~/constant";
+import { TEAM } from "~/constant";
 import type { ActionArgs, LoaderArgs } from "@remix-run/cloudflare";
 import { json } from "@remix-run/cloudflare";
 import { redirect } from "@remix-run/cloudflare";
@@ -8,11 +9,12 @@ import FlagForm from "~/components/flag-form";
 import { useLoaderData } from "@remix-run/react";
 import type { Flag } from "~/types/flag";
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request, params }: ActionArgs) => {
+  const { app } = params;
   const formData = await request.formData();
   //TODO: Validate Data
 
-  const flagName = formData.get("name");
+  const flag = formData.get("name");
   const description = formData.get("description");
   const percentage = formData.get("percentage");
   const attributes = formData.getAll("attribute") as ContionalAttribute[];
@@ -34,16 +36,19 @@ export const action = async ({ request }: ActionArgs) => {
     conditions: deducedConditions,
   };
 
-  const data = { flagName, description, percentage: flagPercentage };
+  const data = { description, percentage: flagPercentage };
 
-  const res = await fetch(`${CORE_API}/apps/default/flags`, {
-    mode: "no-cors",
-    method: "POST",
-    body: JSON.stringify(data),
-  });
+  const res = await fetch(
+    `${CORE_API}/teams/${TEAM}/apps/${app}/flags/${flag}`,
+    {
+      mode: "no-cors",
+      method: "POST",
+      body: JSON.stringify(data),
+    }
+  );
 
   if (res.ok) {
-    return redirect("/");
+    return redirect(`/${app}`);
   }
 
   //TODO: return error messages for failures
@@ -53,10 +58,13 @@ export const action = async ({ request }: ActionArgs) => {
 };
 
 export const loader = async ({ params }: LoaderArgs) => {
-  const { flagName } = params;
-  const res = await fetch(`${CORE_API}/apps/default/flags/${flagName}`, {
-    mode: "no-cors",
-  });
+  const { flag, app } = params;
+  const res = await fetch(
+    `${CORE_API}/teams/${TEAM}/apps/${app}/flags/${flag}`,
+    {
+      mode: "no-cors",
+    }
+  );
   if (res.ok) {
     return json(await res.json<Flag>());
   }

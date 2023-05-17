@@ -4,7 +4,8 @@
   "description": "",
   "scripts": {
     "ci:version": "changeset version",
-    "ci:publish": "pnpm publish -r"
+    "ci:publish": "pnpm publish -r",
+    "record-changeset": "pnpm changeset"
   },
   "engines": {
     "node": ">=18.10"
