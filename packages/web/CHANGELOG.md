@@ -1,5 +1,13 @@
 # @flargd/web
 
+## 0.4.0
+
+### Minor Changes
+
+- 6cde97ed: add getAll() function for evaluating all flags related to an app
+- 1801c500: - update urls to the latest endpoint for flag resolution
+  - change error logging path
+
 ## 0.3.0
 
 ### Minor Changes
