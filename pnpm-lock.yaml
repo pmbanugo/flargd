@@ -76,8 +76,8 @@ importers:
         specifier: ^4.9.4
         version: 4.9.5
       wrangler:
-        specifier: 2.20.1
-        version: 2.20.1
+        specifier: 2.20.2
+        version: 2.20.2
 
   apps/api:
     dependencies:
@@ -95,8 +95,8 @@ importers:
         specifier: ^0.27.2
         version: 0.27.3
       wrangler:
-        specifier: 2.20.1
-        version: 2.20.1
+        specifier: 2.20.2
+        version: 2.20.2
 
   packages/web:
     devDependencies:
@@ -10074,8 +10074,8 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: true
 
-  /wrangler@2.20.1:
-    resolution: {integrity: sha512-5fl7xF7OkRHim0B0kVXtmSPMrRhRKZ3rqAdn9tKYgi6MnZOvWC+HesGKpNxpVUWsJYpPfJ5AU6gZ6gEL1OLmFQ==}
+  /wrangler@2.20.2:
+    resolution: {integrity: sha512-ZWydYGuKbHC8PdKLk7JAdRYMK78mHVnmaFsLRf2ZpnmVl2nQl9lKIXKKGVUdmezj70FvLhJCD/2LsGOPGg2AFg==}
     engines: {node: '>=16.13.0'}
     hasBin: true
     dependencies:
